@@ -1,0 +1,24 @@
+{
+  "name": "startup-auth",
+  "version": "1.0.0",
+  "description": "Persona server startup authenticator.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cerlancism/startup-auth.git"
+  },
+  "author": "Cerlancism",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Cerlancism/startup-auth/issues"
+  },
+  "homepage": "https://github.com/Cerlancism/startup-auth#readme",
+  "dependencies": {
+    "@types/node": "^13.13.0",
+    "crypto-js": "^4.0.0",
+    "express": "^4.17.1"
+  }
+}

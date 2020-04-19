@@ -1,5 +1,7 @@
 {
     "compilerOptions": {
-        "lib": ["es2020"]
-    }
+        "strict": true,
+        "module": "commonJS",
+        "lib": ["es2020"],
+    },
 }

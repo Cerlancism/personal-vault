@@ -1,21 +1,21 @@
 {
-  "name": "startup-auth",
+  "name": "personal-vault",
   "version": "1.0.0",
-  "description": "Persona server startup authenticator.",
+  "description": "Personal encrypted vault store.",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Cerlancism/startup-auth.git"
+    "url": "git+https://github.com/Cerlancism/personal-vault.git"
   },
   "author": "Cerlancism",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Cerlancism/startup-auth/issues"
+    "url": "https://github.com/Cerlancism/personal-vault/issues"
   },
-  "homepage": "https://github.com/Cerlancism/startup-auth#readme",
+  "homepage": "https://github.com/Cerlancism/personal-vault#readme",
   "dependencies": {
     "@types/node": "^13.13.0",
     "crypto-js": "^4.0.0",

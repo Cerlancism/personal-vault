@@ -114,8 +114,6 @@ app.all("*", (req, res, next) =>
 
     context.accesses = context.accesses.filter(x => now - x.time < interval)
 
-    console.log(context.accesses)
-
     if (context.denyList.has(req.ip))
     {
         const lastAccesses = context.accesses.filter(x => x.ip === req.ip)

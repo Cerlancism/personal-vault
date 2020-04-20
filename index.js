@@ -79,13 +79,14 @@ function deny(res, message = "Access Denied")
 
 const app = express()
 
+app.enable('trust proxy')
+
 app.all("*", (req, res, next) =>
 {
     // protocol check, from ie: glitch.com, if http, redirect to https,
     const protocol = req.get('X-Forwarded-Proto')
     if (!protocol)
     {
-        console.log("X-Forwarded-Proto missing")
         return next();
     }
     if (protocol.indexOf("https") != -1)
@@ -102,7 +103,7 @@ app.all("*", (req, res, next) =>
 // Logging and rate limiting all accesses
 app.use("*", (req, res, next) => 
 {
-    log("ACCESS", "params", JSON.stringify(req.params))
+    log("ACCESS", "ip", req.ip, "params", JSON.stringify(req.params))
     context.accesses.push(new Date())
     if (context.accesses.length > 1100)
     {
@@ -170,6 +171,7 @@ app.get("/open", (req, res, next) =>
     return res.contentType("text").send("ok, ttl=" + ttlActual)
 })
 
+// Take the KeySession target file
 app.get("/take", (req, res) =>
 {
     if (!context.keySession || !context.keySession.key)
@@ -187,6 +189,7 @@ app.get("/take", (req, res) =>
     return res.contentType("text").send(decrypt(file, key))
 })
 
+// Crypto utils with SHA1 and AES
 app.get("/randomhex", (req, res) =>
 {
     res.contentType("text").send(generateRandomHex(isNaN(req.query.length) ? 32 : Number(req.query.length)))
@@ -207,6 +210,7 @@ app.get("/decrypt", (req, res) =>
     res.contentType("text").send(decrypt(req.query.data, req.query.key))
 })
 
+// Deny all other accesses
 app.all("/*", (req, res) =>
 {
     return deny(res)

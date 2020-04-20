@@ -1,5 +1,9 @@
 vault/
+
 shrinkwrap.yaml
+.shrinkwrap.*
+.gitconfig
+
 # Logs
 logs
 *.log
@@ -115,3 +119,4 @@ dist
 .yarn/unplugged
 .yarn/build-state.yml
 .pnp.*
+

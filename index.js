@@ -32,9 +32,10 @@ class KeySession
 
 const context =
 {
-    denied: false,
+    /** @type {Set<string>} */
+    denyList: new Set(),
 
-    /** @type {Date[]} */
+    /** @type {{ip: string, time: number}[]} */
     accesses: [],
 
     /** @type {KeySession?} */
@@ -95,38 +96,46 @@ app.all("*", (req, res, next) =>
     } else
     {
         const redirect = "https://" + req.hostname + req.url
-        console.log("Redirecting to https: " , redirect)
+        console.log("Redirecting to https: ", redirect)
         res.redirect(redirect);
     }
 })
 
 // Logging and rate limiting all accesses
-app.use("*", (req, res, next) => 
+app.all("*", (req, res, next) => 
 {
+    const limit = 5
+    const interval = 10000
+    const now = Date.now()
+
     log("ACCESS", "ip", req.ip, "params", JSON.stringify(req.params))
-    context.accesses.push(new Date())
-    if (context.accesses.length > 1100)
+
+    context.accesses.push({ ip: req.ip, time: now })
+
+    context.accesses = context.accesses.filter(x => now - x.time < interval)
+
+    console.log(context.accesses)
+
+    if (context.denyList.has(req.ip))
     {
-        context.accesses = context.accesses.slice(100)
-    }
-    if (context.accesses.length > 10)
-    {
-        const start = context.accesses[context.accesses.length - 11]
-        const end = context.accesses[context.accesses.length - 1]
-        if (end.getTime() - start.getTime() < 10000)
+        const lastAccesses = context.accesses.filter(x => x.ip === req.ip)
+        if (lastAccesses.length < limit)
         {
-            context.denied = true
-        }
-        else
-        {
-            context.denied = false
-        }
-        if (context.denied)
-        {
-            context.accesses.shift()
+            context.denyList.delete(req.ip)
         }
     }
-    if (context.denied)
+
+    const accessesByIp = context.accesses.filter(x => x.ip === req.ip)
+    if (accessesByIp.length > limit)
+    {
+        const start = accessesByIp[accessesByIp.length - limit - 1].time
+        const end = accessesByIp[accessesByIp.length - 1].time
+        if (end - start < interval)
+        {
+            context.denyList.add(req.ip)
+        }
+    }
+    if (context.denyList.has(req.ip))
     {
         return deny(res)
     }
@@ -136,7 +145,7 @@ app.use("*", (req, res, next) =>
 // Root page
 app.get("/", (req, res) =>
 {
-    if (context.denied)
+    if (context.denyList.has(req.ip))
     {
         return deny(res)
     }
@@ -148,7 +157,7 @@ app.get("/open", (req, res, next) =>
 {
     log("OPEN VAULT", "query", JSON.stringify(req.query))
 
-    if (context.denied)
+    if (context.denyList.has(req.ip))
     {
         return deny(res)
     }

@@ -75,7 +75,7 @@ function isValidKey(target, key)
  */
 function deny(res, message = "Access Denied")
 {
-    return res.contentType("text").status(401).send(message)
+    return res.contentType("text").status(403).send(message)
 }
 
 const app = express()
@@ -143,10 +143,6 @@ app.all("*", (req, res, next) =>
 // Root page
 app.get("/", (req, res) =>
 {
-    if (context.denyList.has(req.ip))
-    {
-        return deny(res)
-    }
     return res.send("<h1>Personal Vault</h1>")
 })
 
@@ -154,11 +150,6 @@ app.get("/", (req, res) =>
 app.get("/open", (req, res, next) =>
 {
     log("OPEN VAULT", "query", JSON.stringify(req.query))
-
-    if (context.denyList.has(req.ip))
-    {
-        return deny(res)
-    }
 
     const { key, target, ttl } = req.query
 

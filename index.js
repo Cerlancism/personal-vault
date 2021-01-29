@@ -200,6 +200,7 @@ app.get("/hash", (req, res) =>
 
 app.get("/encrypt", (req, res) =>
 {
+    console.log("query", req.query)
     res.contentType("text").send(encrypt(req.query.data, req.query.key))
 })
 
